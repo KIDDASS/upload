@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -9,8 +9,6 @@ export default async function handler(req, res) {
   
   try {
     const adminPass = req.headers['x-admin-pass'];
-    console.log('Admin pass check:', adminPass ? 'provided' : 'missing');
-    console.log('Expected pass:', process.env.ADMIN_PASSWORD ? 'set' : 'not set');
     
     if (adminPass !== process.env.ADMIN_PASSWORD) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -25,12 +23,6 @@ export default async function handler(req, res) {
     const gistId = process.env.GIST_ID;
     const fileName = process.env.FILE_PATH || 'anc.txt';
     
-    console.log('Env check:', {
-      tokenSet: token ? 'yes' : 'NO',
-      gistIdSet: gistId ? 'yes' : 'NO',
-      fileName
-    });
-    
     if (!token) {
       return res.status(500).json({ error: 'GITHUB_TOKEN not configured' });
     }
@@ -41,7 +33,6 @@ export default async function handler(req, res) {
     
     // Update Gist
     const gistUrl = `https://api.github.com/gists/${gistId}`;
-    console.log('Updating gist:', gistUrl);
     
     const putRes = await fetch(gistUrl, {
       method: 'PATCH',
@@ -59,8 +50,6 @@ export default async function handler(req, res) {
         }
       })
     });
-    
-    console.log('GitHub response status:', putRes.status);
     
     if (!putRes.ok) {
       const errorText = await putRes.text();
@@ -90,7 +79,6 @@ export default async function handler(req, res) {
         });
       } catch (discordError) {
         console.error('Discord webhook failed:', discordError);
-        // Don't fail the whole request if Discord fails
       }
     }
     
@@ -103,4 +91,4 @@ export default async function handler(req, res) {
       message: err.message 
     });
   }
-}
+};
