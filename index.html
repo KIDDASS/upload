@@ -3,168 +3,280 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hermano — Announcement Uploader</title>
+  <title>Hermanor</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
     body {
-      background-color: #0d0d0d;
+      background-color: #000;
       color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 1rem;
+      padding: 20px;
+      position: relative;
     }
-    
+
     .container {
-      background: #1a1a1a;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      background: #000;
+      border: 1px solid #222;
+      padding: 3rem;
       width: 100%;
-      max-width: 400px;
-      text-align: center;
+      max-width: 480px;
+      animation: fadeInUp 0.6s ease-out;
     }
-    
+
     h1 {
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 2.5rem;
+      color: #fff;
+      animation: slideIn 0.8s ease-out;
     }
-    
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .input-group:nth-child(2) {
+      animation-delay: 0.1s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    .input-group:nth-child(3) {
+      animation-delay: 0.2s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    label {
+      display: block;
+      font-size: 0.813rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
     textarea {
       width: 100%;
-      height: 120px;
-      border-radius: 8px;
-      padding: 10px;
-      background: #111;
+      height: 140px;
+      border: 1px solid #222;
+      padding: 1rem;
+      background: #000;
       color: #fff;
-      border: 1px solid #333;
-      margin-bottom: 1rem;
-      resize: vertical;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
+      font-family: inherit;
+      font-size: 0.938rem;
+      resize: none;
+      transition: all 0.3s ease;
     }
-    
-    textarea:focus,
-    input:focus {
+
+    textarea:focus {
       outline: none;
-      border-color: #ff0000;
+      border-color: #fff;
+      box-shadow: 0 0 0 1px #fff;
     }
-    
+
+    textarea::placeholder {
+      color: #444;
+    }
+
     input[type=password] {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      border: 1px solid #333;
-      background: #111;
+      padding: 0.875rem 1rem;
+      border: 1px solid #222;
+      background: #000;
       color: #fff;
-      font-size: 14px;
+      font-family: inherit;
+      font-size: 0.938rem;
+      transition: all 0.3s ease;
     }
-    
+
+    input[type=password]:focus {
+      outline: none;
+      border-color: #fff;
+      box-shadow: 0 0 0 1px #fff;
+    }
+
+    input[type=password]::placeholder {
+      color: #444;
+    }
+
     button {
       width: 100%;
-      padding: 12px;
-      background: #ff0000;
+      padding: 1rem;
+      background: #fff;
       border: none;
-      border-radius: 8px;
-      color: #fff;
+      color: #000;
       cursor: pointer;
-      font-weight: bold;
-      font-size: 15px;
-      transition: background 0.3s ease;
+      font-weight: 500;
+      font-size: 0.938rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+      animation: slideIn 0.8s ease-out 0.3s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.1);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
     button:hover {
-      background: #cc0000;
+      background: #e5e5e5;
+      transform: translateY(-2px);
     }
-    
+
     button:active {
-      background: #990000;
+      background: #d4d4d4;
+      transform: translateY(0);
     }
-    
-    button:disabled {
-      background: #555;
-      cursor: not-allowed;
+
+    button.loading {
+      pointer-events: none;
+      opacity: 0.7;
     }
-    
+
     #status {
-      margin-top: 1rem;
-      font-size: 0.9rem;
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+      text-align: center;
+      color: #999;
       min-height: 20px;
+      transition: all 0.3s ease;
     }
-    
-    .success {
-      color: #00ff00;
+
+    #status.success {
+      color: #fff;
+      animation: slideIn 0.5s ease-out;
     }
-    
-    .error {
-      color: #ff4444;
+
+    #status.error {
+      color: #999;
+      animation: slideIn 0.5s ease-out;
     }
-    
-    .loading {
-      color: #ffaa00;
+
+    #status.loading {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: #444;
+      letter-spacing: 0.05em;
+      animation: fadeInUp 1s ease-out 0.5s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    footer span {
+      color: #666;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📢 Hermano Admin Panel</h1>
-    <textarea id="announcement" placeholder="Type announcement here..."></textarea>
-    <input type="password" id="adminPass" placeholder="Admin Password">
+    <h1>Control Panel</h1>
+    
+    <div class="input-group">
+      <label for="announcement">Announcement</label>
+      <textarea id="announcement" placeholder="Enter your announcement"></textarea>
+    </div>
+
+    <div class="input-group">
+      <label for="adminPass">Password</label>
+      <input type="password" id="adminPass" placeholder="Enter admin password">
+    </div>
+
     <button id="updateBtn">Update Announcement</button>
     <p id="status"></p>
   </div>
-  
+
+  <footer>MADE BY <span>KIDD</span></footer>
+
   <script>
-    // Use relative path for API - works in both local and production
     const API_URL = '/api/updateAnnouncement';
-    
-    const announcementInput = document.getElementById('announcement');
-    const adminPassInput = document.getElementById('adminPass');
-    const updateBtn = document.getElementById('updateBtn');
-    const status = document.getElementById('status');
-    
-    // Add Enter key support (Ctrl+Enter to submit)
-    announcementInput.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'Enter') {
-        updateBtn.click();
-      }
-    });
-    
-    updateBtn.addEventListener('click', async () => {
-      const announcement = announcementInput.value.trim();
-      const adminPass = adminPassInput.value.trim();
-      
-      // Clear previous status classes
+
+    document.getElementById('updateBtn').addEventListener('click', async () => {
+      const announcement = document.getElementById('announcement').value.trim();
+      const adminPass = document.getElementById('adminPass').value.trim();
+      const status = document.getElementById('status');
+      const btn = document.getElementById('updateBtn');
+
       status.className = '';
-      
+
       if (!announcement) {
-        status.textContent = '❌ Please enter an announcement.';
+        status.textContent = 'Please enter an announcement.';
         status.className = 'error';
         return;
       }
-      
-      if (!adminPass) {
-        status.textContent = '❌ Please enter admin password.';
-        status.className = 'error';
-        return;
-      }
-      
-      // Disable button during request
-      updateBtn.disabled = true;
-      status.textContent = '⏳ Updating...';
+
+      status.textContent = 'Updating...';
       status.className = 'loading';
-      
-      console.log('Attempting to fetch:', API_URL);
-      console.log('Current URL:', window.location.href);
-      
+      btn.classList.add('loading');
+
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
@@ -174,30 +286,23 @@
           },
           body: JSON.stringify({ announcement })
         });
-        
-        console.log('Response status:', response.status);
-        console.log('Response headers:', [...response.headers.entries()]);
-        
+
         const data = await response.json();
-        console.log('Response data:', data);
+        btn.classList.remove('loading');
         
         if (response.ok) {
-          status.textContent = '✅ Announcement updated successfully!';
+          status.textContent = 'Announcement updated successfully';
           status.className = 'success';
-          announcementInput.value = '';
-          adminPassInput.value = '';
+          document.getElementById('announcement').value = '';
         } else {
-          status.textContent = '❌ Error: ' + (data.error || 'Unknown error');
+          status.textContent = 'Error: ' + data.error;
           status.className = 'error';
         }
       } catch (error) {
-        status.textContent = '⚠️ Failed to connect. Error: ' + error.message;
+        btn.classList.remove('loading');
+        status.textContent = 'Failed to connect to server';
         status.className = 'error';
-        console.error('Full error:', error);
-        console.error('Error type:', error.constructor.name);
-      } finally {
-        // Re-enable button
-        updateBtn.disabled = false;
+        console.error(error);
       }
     });
   </script>
