@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermano — Announcement Uploader</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+      width: 400px;
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      border-radius: 8px;
+      padding: 10px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      margin-bottom: 1rem;
+      resize: none;
+    }
+    input[type=password] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #111;
+      color: #fff;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #ff0000;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #cc0000;
+    }
+    #status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📢 Hermano Admin Panel</h1>
+    <textarea id="announcement" placeholder="Type announcement here..."></textarea>
+    <input type="password" id="adminPass" placeholder="Admin Password">
+    <button id="updateBtn">Update Announcement</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    // Use same domain for API since it's all in one Vercel project
+    const API_URL = '/api/updateAnnouncement';
+
+    document.getElementById('updateBtn').addEventListener('click', async () => {
+      const announcement = document.getElementById('announcement').value.trim();
+      const adminPass = document.getElementById('adminPass').value.trim();
+      const status = document.getElementById('status');
+
+      if (!announcement) {
+        status.textContent = '❌ Please enter an announcement.';
+        return;
+      }
+
+      status.textContent = '⏳ Updating...';
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-pass': adminPass
+          },
+          body: JSON.stringify({ announcement })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          status.textContent = '✅ Announcement updated successfully!';
+          document.getElementById('announcement').value = '';
+        } else {
+          status.textContent = '❌ Error: ' + data.error;
+        }
+      } catch (error) {
+        status.textContent = '⚠️ Failed to connect to server.';
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
