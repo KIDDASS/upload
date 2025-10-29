@@ -60,19 +60,24 @@ module.exports = async function handler(req, res) {
       });
     }
     
-    // Discord webhook with BIG BOLD text and optional image
+    // Discord webhook with BIG BOLD text and hidden @everyone + image at bottom
     const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
     if (discordWebhook) {
       try {
         // Convert to BIG and BOLD text
         const bigBoldText = `# **${announcement}**`;
         
-        // Build the message content
-        let messageContent = `@everyone\n${bigBoldText}`;
+        // Spoiler text to hide content
+        const spoilerText = '||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||||‍||';
         
-        // Add image if provided
+        // Build the message - announcement at top, hidden @everyone and image at bottom
+        let messageContent = bigBoldText;
+        
+        // Add spoiler with @everyone and optional image at the bottom
         if (imageUrl && typeof imageUrl === 'string') {
-          messageContent += `\n${imageUrl}`;
+          messageContent += `\n\n${spoilerText}\n@everyone\n${imageUrl}`;
+        } else {
+          messageContent += `\n\n${spoilerText}\n@everyone`;
         }
         
         await fetch(discordWebhook, {
