@@ -89,6 +89,12 @@
       animation-fill-mode: forwards;
     }
 
+    .input-group:nth-child(4) {
+      animation-delay: 0.3s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
     label {
       display: block;
       font-size: 0.813rem;
@@ -122,6 +128,7 @@
       color: #444;
     }
 
+    input[type=text],
     input[type=password] {
       width: 100%;
       padding: 0.875rem 1rem;
@@ -133,12 +140,14 @@
       transition: all 0.3s ease;
     }
 
+    input[type=text]:focus,
     input[type=password]:focus {
       outline: none;
       border-color: #fff;
       box-shadow: 0 0 0 1px #fff;
     }
 
+    input[type=text]::placeholder,
     input[type=password]::placeholder {
       color: #444;
     }
@@ -155,7 +164,7 @@
       font-family: inherit;
       transition: all 0.3s ease;
       margin-top: 2rem;
-      animation: slideIn 0.8s ease-out 0.3s;
+      animation: slideIn 0.8s ease-out 0.4s;
       opacity: 0;
       animation-fill-mode: forwards;
       position: relative;
@@ -246,6 +255,11 @@
     </div>
 
     <div class="input-group">
+      <label for="imageUrl">Image URL (Optional)</label>
+      <input type="text" id="imageUrl" placeholder="https://example.com/image.png">
+    </div>
+
+    <div class="input-group">
       <label for="adminPass">Password</label>
       <input type="password" id="adminPass" placeholder="Enter admin password">
     </div>
@@ -261,6 +275,7 @@
 
     document.getElementById('updateBtn').addEventListener('click', async () => {
       const announcement = document.getElementById('announcement').value.trim();
+      const imageUrl = document.getElementById('imageUrl').value.trim();
       const adminPass = document.getElementById('adminPass').value.trim();
       const status = document.getElementById('status');
       const btn = document.getElementById('updateBtn');
@@ -278,13 +293,18 @@
       btn.classList.add('loading');
 
       try {
+        const body = { announcement };
+        if (imageUrl) {
+          body.imageUrl = imageUrl;
+        }
+
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'x-admin-pass': adminPass
           },
-          body: JSON.stringify({ announcement })
+          body: JSON.stringify(body)
         });
 
         const data = await response.json();
@@ -294,6 +314,7 @@
           status.textContent = 'Announcement updated successfully';
           status.className = 'success';
           document.getElementById('announcement').value = '';
+          document.getElementById('imageUrl').value = '';
         } else {
           status.textContent = 'Error: ' + data.error;
           status.className = 'error';
