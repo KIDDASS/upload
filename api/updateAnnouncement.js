@@ -60,21 +60,19 @@ module.exports = async function handler(req, res) {
       });
     }
     
-    // Discord webhook (optional)
+    // Discord webhook with BIG BOLD text
     const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
     if (discordWebhook) {
       try {
+        // Convert to BIG and BOLD text
+        const bigBoldText = `# **${announcement}**`;
+        
         await fetch(discordWebhook, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            content: '@everyone',
-            embeds: [{
-              title: '📢 NEW ANNOUNCEMENT',
-              description: announcement,
-              color: 0xFFD700,
-              timestamp: new Date().toISOString()
-            }]
+            content: `@everyone\n${bigBoldText}`,
+            allowed_mentions: { parse: ['everyone'] }
           })
         });
       } catch (discordError) {
