@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    const { announcement } = req.body || {};
+    const { announcement, imageUrl } = req.body || {};
     if (!announcement || typeof announcement !== 'string') {
       return res.status(400).json({ error: 'Missing announcement text' });
     }
@@ -60,18 +60,26 @@ module.exports = async function handler(req, res) {
       });
     }
     
-    // Discord webhook with BIG BOLD text
+    // Discord webhook with BIG BOLD text and optional image
     const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
     if (discordWebhook) {
       try {
         // Convert to BIG and BOLD text
         const bigBoldText = `# **${announcement}**`;
         
+        // Build the message content
+        let messageContent = `@everyone\n${bigBoldText}`;
+        
+        // Add image if provided
+        if (imageUrl && typeof imageUrl === 'string') {
+          messageContent += `\n${imageUrl}`;
+        }
+        
         await fetch(discordWebhook, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            content: `@everyone\n${bigBoldText}`,
+            content: messageContent,
             allowed_mentions: { parse: ['everyone'] }
           })
         });
